@@ -1,0 +1,17 @@
+.idea/
+__pycache__
+*.pyc
+*.log
+*.swp
+.DS_Store
+.cache
+.coverage
+artifacts
+*vscode/
+.env
+.eggs/
+*.egg-info/
+.tox
+.mypy_cache/
+cache/
+.docker-stamp
