@@ -42,8 +42,8 @@ TBD
 
 ---
 
-[repo]: https://github.com/Reyalsorik/python_retry_decorator
-[repo_issue]: https://github.com/Reyalsorik/python_retry_decorator/issues
+[repo]: https://github.com/Reyalsorik/python-retry-decorator
+[repo_issue]: https://github.com/Reyalsorik/python-retry-decorator/issues
 
 [repo_badge]: https://img.shields.io/badge/Retry-Decorator-555555.svg?logo=github
 
