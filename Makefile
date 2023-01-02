@@ -2,7 +2,7 @@
 MAJOR_VERSION ?= 1
 MINOR_VERSION ?= 0
 BUILD_NUMBER ?= 0
-PYTHON_VERSION ?= 3.11.1
+PYTHON_VERSION ?= 3.7
 
 # Functional vars
 BASE_IMAGE_NAME := retry-decorator
