@@ -6,7 +6,7 @@ PYTHON_VERSION ?= 3.11.1
 
 # Functional vars
 BASE_IMAGE_NAME := retry-decorator
-PACKAGE_NAME := retry-decorator
+PACKAGE_NAME := python-$(BASE_IMAGE_NAME)
 SOURCE_DIR := retry_decorator
 PIP_TOOLS_IMAGE := $(BASE_IMAGE_NAME)-piptools
 BUILDER_IMAGE := $(BASE_IMAGE_NAME)-builder
