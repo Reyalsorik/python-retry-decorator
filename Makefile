@@ -82,7 +82,7 @@ reqs: requirements.txt tests/requirements.txt  ## Update requirements via pip-co
 requirements.txt: requirements.in FORCE | .cache/piptools-docker.stamp
 	$(PIP_COMPILE) --upgrade --output-file $@ $<
 
-tests/requirements.txt: requirements.in FORCE | .cache/piptools-docker.stamp
+tests/requirements.txt: tests/requirements.in FORCE | .cache/piptools-docker.stamp
 	$(PIP_COMPILE) --upgrade --output-file $@ $<
 
 .cache/piptools-docker.stamp: docker/Dockerfile.piptools
