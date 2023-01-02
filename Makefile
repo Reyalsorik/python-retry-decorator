@@ -57,6 +57,10 @@ artifacts/$(PACKAGE_NAME)-$(PBR_VERSION).tar.gz: .cache/main-docker.stamp $(PYTH
 installcheck: artifacts/$(PACKAGE_NAME)-$(PBR_VERSION).tar.gz  ## Test pip package validity
 	$(DOCKER_RUN) $(BUILDER_IMAGE) python -m pip install $<
 
+.PHONY: shell
+shell: build-docker  ## Interactive shell
+	$(DOCKER_RUN) --interactive $(BUILDER_IMAGE) /bin/bash
+
 .PHONY: lint
 lint: artifacts/lint.log  ## Linting
 
