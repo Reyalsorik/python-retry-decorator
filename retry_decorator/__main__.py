@@ -13,7 +13,7 @@ import tenacity
 from retry_decorator.lib.exceptions import RetryError
 
 
-def get_default_retry_exceptions() -> tuple:
+def get_retry_exceptions() -> tuple:
     """Get the exception types that are permitted for retry."""
     return (
         socket.timeout,
@@ -23,15 +23,15 @@ def get_default_retry_exceptions() -> tuple:
 
 
 def retry_on_exceptions(exceptions: Union[Tuple[Type[BaseException], ...], Type[BaseException]] = tuple()) -> tenacity.retry_if_exception_type:
-    """Retry if exception type is permitted.
+    """Retry permitted exceptions.
 
     :param exceptions: exceptions to permit
     """
-    return tenacity.retry_if_exception_type(exceptions or get_default_retry_exceptions())
+    return tenacity.retry_if_exception_type(exceptions or get_retry_exceptions())
 
 
 def retry_on_false() -> tenacity.retry_base:
-    """Retry if result is false."""
+    """Retry on false results."""
     return tenacity.retry_if_result(lambda value: value is False)
 
 
