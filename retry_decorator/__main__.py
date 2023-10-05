@@ -6,7 +6,7 @@ import logging
 import socket
 import traceback
 from functools import wraps
-from typing import Any, Tuple, Type, Union
+from typing import Any, Tuple, Type, Union, Callable
 
 import tenacity
 
@@ -56,18 +56,25 @@ class Retry(object):
         self.max_default_wait = 10
         self.function = None
 
-    def __call__(self, function: Any, *args, **kwargs) -> Any:
+    def __call__(self, unwrapped: Any, *args, **kwargs) -> Any:
         """Callable.
 
         :param function: function to retry
         """
-        self.function = function
-        if self.function is None:
-            raise TypeError(f"{self.__class__.__name__} takes 0 positional arguments but 1 was given, did you mean 'Retry()'?")  # Decorator must be called
+        if isinstance(unwrapped, type):
+            return self._decorate_class(cls=unwrapped)
+        return self._decorate_function(function=unwrapped)
 
-        @wraps(self.function)
-        def retry_wrapper(*wrapped_args, **wrapped_kwargs):
-            """Wrap the function + arguments in a retry decorator."""
+    def _decorate_function(self, function: Callable) -> Callable:
+        """Decorate a function.
+
+        :param function: function to decorate
+        """
+        self.function = function
+
+        @wraps(function)
+        def retry_function_wrapper(*args, **kwargs) -> Callable:
+            """Wrap the function in a retry decorator."""
             return tenacity.retry(
                 retry=self.retry,
                 stop=tenacity.stop_after_attempt(self.retries),
@@ -76,9 +83,18 @@ class Retry(object):
                 reraise=True,  # Always re-raise exceptions
                 retry_error_callback=self.error_callback,
                 after=self.log_retry
-            )(self.function)(*wrapped_args, **wrapped_kwargs)
+            )(self.function)(*args, **kwargs)
+        return retry_function_wrapper
 
-        return retry_wrapper
+    def _decorate_class(self, cls: type) -> type:
+        """Wrap each method in a retry decorator.
+
+        :param cls: class to decorate
+        """
+        for attr_name, attr_value in vars(cls).items():
+            if not attr_name.startswith("__") and callable(attr_value):
+                setattr(cls, attr_name, self._decorate_function(attr_value))
+        return cls
 
     def _get_wait(self) -> Union[tenacity.wait_exponential, tenacity.wait_random]:
         """Get the amount of time to wait between retries."""
