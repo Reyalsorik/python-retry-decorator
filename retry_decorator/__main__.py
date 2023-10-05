@@ -54,7 +54,6 @@ class Retry(object):
         self.wait_before = wait_before
         self.jitter = jitter
         self.max_default_wait = 10
-        self.function = None
 
     def __call__(self, unwrapped: Any, *args, **kwargs) -> Any:
         """Callable.
@@ -70,8 +69,6 @@ class Retry(object):
 
         :param function: function to decorate
         """
-        self.function = function
-
         @wraps(function)
         def retry_function_wrapper(*args, **kwargs) -> Callable:
             """Wrap the function in a retry decorator."""
@@ -83,7 +80,7 @@ class Retry(object):
                 reraise=True,  # Always re-raise exceptions
                 retry_error_callback=self.error_callback,
                 after=self.log_retry
-            )(self.function)(*args, **kwargs)
+            )(function)(*args, **kwargs)
         return retry_function_wrapper
 
     def _decorate_class(self, cls: type) -> type:
@@ -115,7 +112,7 @@ class Retry(object):
 
         :param retry_state: call state of the retry
         """
-        raise RetryError(self.logger, getattr(self.function, "__name__"), retry_state.attempt_number)
+        raise RetryError(self.logger, getattr(retry_state.fn, "__name__"), retry_state.attempt_number)
 
     def log_retry(self, retry_state: tenacity.RetryCallState) -> None:
         """Log when a retry occurs.
@@ -135,4 +132,4 @@ class Retry(object):
             result = result if retry_state.attempt_number < self.retries else f"{result}: \n{formatted_exception.strip()}"
         else:
             verb, result = "returned", retry_state.outcome.result()
-        self.logger.warning(f"Retry {getattr(self.function, '__name__')} #{retry_state.attempt_number}/{self.retries}, {verb}: {result}")
+        self.logger.warning(f"Retry {getattr(retry_state.fn, '__name__')} #{retry_state.attempt_number}/{self.retries}, {verb}: {result}")
