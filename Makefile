@@ -15,7 +15,7 @@ PYTHON_CODE_FILES := $(shell find $(CURDIR)/$(SOURCE_DIR) -type f -name "*.py")
 SHELL := /bin/bash -o pipefail
 
 # Dockerizable tools
-DOCKER_RUN = docker run --rm -t -e PBR_VERSION -v $(CURDIR)/.git:/workspace/.git -v $(CURDIR):/workspace -w /workspace
+DOCKER_RUN = docker run --rm -t -e PBR_VERSION -v $(CURDIR):/workspace -w /workspace
 DOCKER_BUILD = docker build --build-arg PYTHON_VERSION=$(PYTHON_VERSION)
 PYTHON = $(DOCKER_RUN) $(BUILDER_IMAGE) python
 TOX = $(DOCKER_RUN) $(BUILDER_IMAGE) tox
