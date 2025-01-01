@@ -4,5 +4,5 @@
 #
 #    make reqs
 #
-tenacity==8.2.3
+tenacity==9.0.0
     # via -r requirements.in
