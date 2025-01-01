@@ -14,24 +14,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get version from tags
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          dry_run: true
-
       - name: Perform lint
         run: make lint
 
       - name: Perform tests
-        env:
-          PBR_VERSION: ${{ steps.tag_version.outputs.new_version }}
         run: make test
 
       - name: Perform dist
-        env:
-          PBR_VERSION: ${{ steps.tag_version.outputs.new_version }}
         run: make dist
 
       - name: Test pip package installation.

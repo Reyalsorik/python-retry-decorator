@@ -1,6 +1,5 @@
 # Overridable vars
 PYTHON_VERSION ?= 3.11
-PBR_VERSION ?= 1.0.0
 
 # Functional vars
 BASE_IMAGE_NAME := retry-decorator
@@ -12,7 +11,7 @@ PYTHON_CODE_FILES := $(shell find $(CURDIR)/$(SOURCE_DIR) -type f -name "*.py")
 SHELL := /bin/bash -o pipefail
 
 # Dockerizable tools
-DOCKER_RUN = docker run --rm -t -e PBR_VERSION=$(PBR_VERSION) -v $(CURDIR):/workspace -v $(CURDIR)/.git:/workspace/.git -w /workspace
+DOCKER_RUN = docker run --rm -t -v $(CURDIR):/workspace -v $(CURDIR)/.git:/workspace/.git -w /workspace
 DOCKER_BUILD = docker build --build-arg PYTHON_VERSION=$(PYTHON_VERSION)
 PYTHON = $(DOCKER_RUN) $(BUILDER_IMAGE) python
 TOX = $(DOCKER_RUN) $(BUILDER_IMAGE) tox
@@ -43,16 +42,13 @@ main-docker: .cache/main-docker.stamp  ## Build main docker image
 	touch $@
 
 .PHONY: dist
-dist: artifacts/$(PACKAGE_NAME)-$(PBR_VERSION).tar.gz  ## Build python package
-
-artifacts/$(PACKAGE_NAME)-$(PBR_VERSION).tar.gz: .cache/main-docker.stamp $(PYTHON_CODE_FILES)
+dist: .cache/main-docker.stamp $(PYTHON_CODE_FILES)  ## Build python package
 	mkdir -p "artifacts"
-	$(PYTHON) setup.py check --metadata --restructuredtext --strict
 	$(PYTHON) setup.py sdist --dist-dir "./artifacts/"
 
 .PHONY: installcheck
-installcheck: artifacts/$(PACKAGE_NAME)-$(PBR_VERSION).tar.gz  ## Test pip package validity
-	$(DOCKER_RUN) $(BUILDER_IMAGE) python -m pip install $<
+installcheck: dist  ## Test pip package validity
+	$(DOCKER_RUN) $(BUILDER_IMAGE) pip install artifacts/*.tar.gz
 
 .PHONY: shell
 shell: build-docker  ## Interactive shell

@@ -4,5 +4,12 @@
 #
 #    make reqs
 #
+packaging==24.2
+    # via setuptools-scm
+setuptools-scm==8.1.0
+    # via -r requirements.in
 tenacity==9.0.0
     # via -r requirements.in
+
+# The following packages are considered to be unsafe in a requirements file:
+# setuptools
