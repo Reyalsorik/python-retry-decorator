@@ -2,6 +2,6 @@
 
 """Initialize the package."""
 
-__all__ = ["Retry", "retry_on_exceptions"]
+__all__ = ["Retry", "retry_on_exceptions", "retry_on_false"]
 
-from .__main__ import Retry, retry_on_exceptions
+from .__main__ import Retry, retry_on_exceptions, retry_on_false
