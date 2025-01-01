@@ -24,13 +24,15 @@ jobs:
       - name: Perform lint
         run: make lint
 
+      - name: Perform dist
+        env:
+          PBR_VERSION: ${{ steps.tag_version.outputs.new_version }}
+        run: make dist
+
       - name: Perform tests
         env:
           PBR_VERSION: ${{ steps.tag_version.outputs.new_version }}
         run: make test
-
-      - name: Perform dist
-        run: make dist
 
       - name: Test pip package installation.
         run: make installcheck
